@@ -1,3 +1,5 @@
+![github actions workflow](https://github.com/emilhornlund/sjuan/actions/workflows/python-ci.yml/badge.svg)
+
 # Sjuan - A Card Game Swedish Style
 
 Sjuan is a Swedish card game for 3-8 players. This command line program provides a digital version of the game, allowing you to play with computer opponents or with friends on the same device.
