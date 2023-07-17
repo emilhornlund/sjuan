@@ -31,6 +31,30 @@ The player who first gets rid of all their cards wins. If a player can play all 
 
 *(Provide instructions here on how to install and run your game, including any necessary prerequisites like Python version or libraries)*
 
+## Running Tests
+
+This project uses pytest for testing. Follow these steps to run the tests:
+
+1. Ensure you have pytest installed in your virtual environment. If not, you can install it with pip:
+
+```bash
+pip install pytest
+```
+
+2. To run all tests, navigate to the project directory in your terminal and use the `pytest` command:
+
+```bash
+pytest
+```
+
+3. If you want to run a specific test file, you can specify it like this:
+
+```bash
+pytest tests/test_file.py
+```
+
+Replace `test_file.py` with the name of the test file you want to run.
+
 ## Contributing
 
 We welcome contributions to this project! Please read our contributing guide for details on how to contribute.
