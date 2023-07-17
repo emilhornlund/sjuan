@@ -1,40 +1,50 @@
 # tests/test_player.py
 
+import unittest
+
+from lib.constants import Suit, Rank
 from lib.player import Player
 from lib.card import Card
 
 
-def test_player_creation():
-    player = Player("Alice")
-    assert player.name == "Alice"
-    assert player.hand == []
+class TestPlayer(unittest.TestCase):
+
+    def test_player_creation(self):
+        player = Player("Alice")
+
+        self.assertEqual(player.get_name(), "Alice")
+        self.assertEqual(player.get_hand_size(), 0)
+
+    def test_player_add_card(self):
+        player = Player("Alice")
+        card = Card(Suit.HEARTS, Rank.SEVEN)
+
+        player.add_card(card)
+
+        self.assertTrue(player.has_card(card))
+        self.assertEqual(player.get_hand_size(), 1)
+        self.assertEqual(player.get_card(0), card)
+
+    def test_player_remove_card(self):
+        player = Player("Alice")
+        card = Card(Suit.HEARTS, Rank.SEVEN)
+
+        player.add_card(card)
+
+        self.assertTrue(player.has_card(card))
+        self.assertEqual(player.get_hand_size(), 1)
+        self.assertEqual(player.get_card(0), card)
+
+        player.remove_card(card)
+
+        self.assertFalse(player.has_card(card))
+        self.assertEqual(player.get_hand_size(), 0)
+
+    def test_player_string_representation(self):
+        player = Player("Alice")
+
+        self.assertEqual(str(player), "Player: Alice, Hand: []")
 
 
-def test_add_card():
-    player = Player("Alice")
-    card = Card("Hearts", "7")
-    player.add_card(card)
-    assert card in player.hand
-    assert len(player) == 1
-
-
-def test_remove_card():
-    player = Player("Alice")
-    card = Card("Hearts", "7")
-    player.add_card(card)
-    player.remove_card(card)
-    assert card not in player.hand
-    assert len(player) == 0
-
-
-def test_has_card():
-    player = Player("Alice")
-    card = Card("Hearts", "7")
-    player.add_card(card)
-    assert player.has_card(card)
-    assert len(player) == 1
-
-
-def test_player_string_representation():
-    player = Player("Alice")
-    assert str(player) == "Player: Alice, Hand: []"
+if __name__ == '__main__':
+    unittest.main()

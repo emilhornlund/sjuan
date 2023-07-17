@@ -1,45 +1,36 @@
 # lib/player.py
 
+from typing import List
+
+from .constants import Suit, Rank
 from .card import Card
 
 
-# Define a Player in the Card Game
 class Player:
-    # Initialize a player with a name and an empty hand
-    # Args:
-    #     name (str): The name of the player
-    def __init__(self, name):
-        self.name = name
-        self.hand = []
+    def __init__(self, name: str):
+        self.__name: str = name
+        self.__hand: List[Card] = []
 
-    # Add a card to the player's hand
-    # Args:
-    #     card (Card): The card to add to the hand
-    def add_card(self, card):
-        self.hand.append(card)
+    def get_name(self):
+        return self.__name
 
-    # Remove a card from the player's hand.
-    # Args:
-    #     card (Card): The card to remove from the hand
-    def remove_card(self, card):
-        self.hand.remove(card)
+    def add_card(self, card: Card):
+        self.__hand.append(card)
 
-    # Check if the player has a specific card in their hand
-    # Args:
-    #     card (Card): The card to check
-    # Returns:
-    #     bool: True if the player has the card, False otherwise
-    def has_card(self, card):
-        return card in self.hand
+    def remove_card(self, card: Card):
+        self.__hand.remove(card)
 
-    # Get the number of cards in the player's hand
-    # Returns:
-    #     int: The number of cards in the hand
-    def __len__(self):
-        return len(self.hand)
+    def has_card(self, card: Card):
+        return card in self.__hand
 
-    # Return a string representation of the player
-    # Returns:
-    #     str: The string representation of the player
+    def get_card(self, index: int):
+        if 0 <= index < len(self.__hand):
+            return self.__hand[index]
+        else:
+            return None
+
+    def get_hand_size(self):
+        return len(self.__hand)
+
     def __repr__(self):
-        return f"Player: {self.name}, Hand: {self.hand}"
+        return f"Player: {self.__name}, Hand: {self.__hand}"
