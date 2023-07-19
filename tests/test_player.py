@@ -1,49 +1,61 @@
 # tests/test_player.py
 
 import unittest
-
 from lib.constants import Suit, Rank
 from lib.player import Player
 from lib.card import Card
 
 
 class TestPlayer(unittest.TestCase):
+    def setUp(self):
+        """Set up a player object and a card object for use in test cases."""
+        self.player = Player("Alice")
+        self.card = Card(Suit.HEARTS, Rank.SEVEN)
 
-    def test_player_creation(self):
-        player = Player("Alice")
+    def test_player_creation_with_name_and_empty_hand(self):
+        """Test that a player is properly initialized with a name and an empty hand."""
+        self.assertEqual(self.player.name, "Alice")
+        self.assertEqual(len(self.player.hand), 0)
 
-        self.assertEqual(player.get_name(), "Alice")
-        self.assertEqual(player.get_hand_size(), 0)
+    def test_add_card_increases_hand_size(self):
+        """Test that adding a card increases the size of the player's hand by 1."""
+        self.player.add_card(self.card)
+        self.assertEqual(len(self.player.hand), 1)
 
-    def test_player_add_card(self):
-        player = Player("Alice")
-        card = Card(Suit.HEARTS, Rank.SEVEN)
+    def test_remove_card_decreases_hand_size(self):
+        """Test that removing a card decreases the size of the player's hand by 1."""
+        self.player.add_card(self.card)
+        self.player.remove_card(self.card)
+        self.assertEqual(len(self.player.hand), 0)
 
-        player.add_card(card)
+    def test_has_card_returns_correct_boolean(self):
+        """Test that has_card method returns true if the card is in the hand, false otherwise."""
+        self.player.add_card(self.card)
+        self.assertTrue(self.player.has_card(self.card))
+        self.player.remove_card(self.card)
+        self.assertFalse(self.player.has_card(self.card))
 
-        self.assertTrue(player.has_card(card))
-        self.assertEqual(player.get_hand_size(), 1)
-        self.assertEqual(player.get_card(0), card)
+    def test_players_with_same_name_and_hand_are_equal(self):
+        """Test that two players with the same name and hand are considered equal."""
+        player2 = Player("Alice")
+        player2.add_card(Card(Suit.HEARTS, Rank.SEVEN))
+        self.assertEqual(self.player, player2)
 
-    def test_player_remove_card(self):
-        player = Player("Alice")
-        card = Card(Suit.HEARTS, Rank.SEVEN)
+    def test_players_with_different_name_or_hand_are_not_equal(self):
+        """Test that two players with different names or hands are not considered equal."""
+        player2 = Player("Bob")
+        player2.add_card(Card(Suit.DIAMONDS, Rank.ACE))
+        self.assertNotEqual(self.player, player2)
 
-        player.add_card(card)
+    def test_string_representation_with_empty_hand(self):
+        """Test that the string representation of a player with an empty hand is as expected."""
+        self.assertEqual(str(self.player), "Player: Alice, Hand: []")
 
-        self.assertTrue(player.has_card(card))
-        self.assertEqual(player.get_hand_size(), 1)
-        self.assertEqual(player.get_card(0), card)
-
-        player.remove_card(card)
-
-        self.assertFalse(player.has_card(card))
-        self.assertEqual(player.get_hand_size(), 0)
-
-    def test_player_string_representation(self):
-        player = Player("Alice")
-
-        self.assertEqual(str(player), "Player: Alice, Hand: []")
+    def test_string_representation_with_cards_in_hand(self):
+        """Test that the string representation of a player with cards in their hand is as expected."""
+        self.player.add_card(self.card)
+        self.assertEqual(str(self.player),
+                         f"Player: Alice, Hand: [{self.card}]")
 
 
 if __name__ == '__main__':
