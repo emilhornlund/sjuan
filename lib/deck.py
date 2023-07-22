@@ -25,6 +25,10 @@ class Deck:
             raise ValueError("Cannot deal from an empty deck.")
         return self.__cards.pop()
 
+    def empty(self) -> bool:
+        """Determines whether the deck is empty or not."""
+        return len(self.__cards) == 0
+
     def __repr__(self):
         """Returns a string representation of the deck, showing the number of cards."""
         return f"Deck of {len(self.__cards)} cards"

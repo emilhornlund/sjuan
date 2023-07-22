@@ -34,6 +34,8 @@ class TestDeck(unittest.TestCase):
         for _ in range(52):
             self.deck.deal()
 
+        self.assertTrue(self.deck.empty())
+
         with self.assertRaises(ValueError) as context:
             self.deck.deal()
 

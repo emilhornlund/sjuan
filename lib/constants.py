@@ -54,3 +54,10 @@ class Rank(Enum):
         if self == Rank.ACE:
             return Rank.ACE
         return Rank(self.value - 1)
+
+
+class Action(Enum):
+    PLAY_CARD = auto()
+    TAKE_CARD = auto()
+    GIVE_CARD = auto()
+    PASS_TURN = auto()
