@@ -25,9 +25,9 @@ class TestRank(unittest.TestCase):
 
     def test_rank_below(self):
         # Test that the rank below ACE is ACE itself, as there is no rank below ACE
-        self.assertEqual(Rank.ACE.get_rank_bellow(), Rank.ACE)
+        self.assertEqual(Rank.ACE.get_rank_below(), Rank.ACE)
         # Test that the rank below TWO is ACE
-        self.assertEqual(Rank.TWO.get_rank_bellow(), Rank.ACE)
+        self.assertEqual(Rank.TWO.get_rank_below(), Rank.ACE)
 
 
 if __name__ == '__main__':

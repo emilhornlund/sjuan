@@ -13,7 +13,7 @@ class Game:
     Class representing the "Sjuan" card game with given rules and player actions.
     """
 
-    def __init__(self, player_names: list[str]):
+    def __init__(self, player_names: list[str]) -> None:
         """
         Constructor for the Game class.
 
