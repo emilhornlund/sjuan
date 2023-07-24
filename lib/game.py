@@ -1,5 +1,8 @@
 # lib/game.py
 
+from enum import Enum
+from typing import List
+
 from .board import Board
 from .card import Card
 from .constants import Action, Suit, Rank
@@ -8,20 +11,34 @@ from .player import Player
 from .turn import Turn
 
 
+class GameMode(Enum):
+    SOLO = 1
+    PARTY = 2
+
+    def __repr__(self) -> str:
+        if self is GameMode.SOLO:
+            return "Solo"
+        if self is GameMode.PARTY:
+            return "Party"
+        raise ValueError("Unknown game mode")
+
+
 class Game:
     """
     Class representing the "Sjuan" card game with given rules and player actions.
     """
 
-    def __init__(self, player_names: list[str]) -> None:
+    def __init__(self, game_mode: GameMode, player_names: List[str]) -> None:
         """
         Constructor for the Game class.
 
+        :param game_mode: Choosen game mode.
         :param player_names: List of player names.
         """
 
-        self.__player_names: list[str] = player_names
-        self.__finished_players: list[Player] = []
+        self.__game_mode: GameMode = game_mode
+        self.__player_names: List[str] = player_names
+        self.__finished_players: List[Player] = []
         self.reset()
 
     def reset(self) -> None:
@@ -29,7 +46,7 @@ class Game:
         Reset the game, initialize players, deck, board and current turn.
         """
 
-        self.__players: list[Player] = [
+        self.__players: List[Player] = [
             Player(name) for name in self.__player_names]
         self.__finished_players.clear()
         self.__current_player_index: int = 0
@@ -55,6 +72,10 @@ class Game:
         """
 
         return self.__current_turn
+
+    @property
+    def board(self) -> List[List[bool]]:
+        return self.__board.matrix
 
     def play_card(self, card: Card) -> None:
         """
@@ -114,13 +135,24 @@ class Game:
         self.__advance_turn(Action.PASS_TURN, None)
 
     @property
-    def finished_players(self) -> list[Player]:
+    def finished_players(self) -> List[Player]:
         """
         Get the list of players who have finished their cards, in the order they finished.
 
         :return: List of finished players.
         """
         return self.__finished_players
+
+    def is_finished(self) -> bool:
+        """
+        Checks if the game is finished.
+
+        The game is considered finished when the number of players who have finished playing their cards 
+        is equal to the total number of players in the game.
+
+        :return: True if the game is finished, False otherwise.
+        """
+        return len(self.finished_players) == len(self.__players)
 
     def __deal_cards(self) -> None:
         """
@@ -236,7 +268,7 @@ class Game:
         return self.__players[self.__current_player_index]
 
     @property
-    def __current_player_valid_cards(self) -> list[Card]:
+    def __current_player_valid_cards(self) -> List[Card]:
         """
         Get valid cards that the current player can play.
 

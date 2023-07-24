@@ -3,14 +3,14 @@
 import unittest
 from lib.card import Card
 from lib.constants import Action, Suit, Rank
-from lib.game import Game
+from lib.game import Game, GameMode
 
 
 class TestGame(unittest.TestCase):
     def setUp(self):
         """Set up a game object for use in test cases."""
 
-        self.game = Game(["Bob", "Alice", "Ted", "Eve"])
+        self.game = Game(GameMode.PARTY, ["Bob", "Alice", "Ted", "Eve"])
 
     def test_game_initialization(self):
         """Test that a new game is correctly initialized."""
@@ -63,7 +63,7 @@ class TestGame(unittest.TestCase):
         self.game.start()
 
         # Simulate a full round of game
-        while len(self.game.finished_players) != 4:
+        while not self.game.is_finished():
             if Action.PLAY_CARD in self.game.turn.actions:
                 card_to_play = self.game.turn.valid_cards[0]
                 self.game.play_card(card_to_play)

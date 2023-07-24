@@ -41,6 +41,22 @@ class Card:
 
         return isinstance(other_card, Card) and self.suit == other_card.suit and self.rank == other_card.rank
 
+    def __lt__(self, other_card: Type['Card']) -> bool:
+        """
+        Defines the less-than ("<") operation for Card instances.
+
+        The operation first compares the suits of the two cards. If they are different, it checks if the suit 
+        of the current card is less than the other card's suit. If the suits are the same, it then checks if the 
+        rank of the current card is less than the other card's rank.
+
+        :param other_card: The other card to compare with the current card.
+        :return: True if the current card should come before the other card in a sorted list, False otherwise.
+        """
+
+        if self.suit != other_card.suit:
+            return self.suit.value < other_card.suit.value
+        return self.rank.value < other_card.rank.value
+
     def __repr__(self) -> str:
         """
         Returns a string representation of the card.

@@ -22,6 +22,20 @@ class TestPlayer(unittest.TestCase):
         self.player.add_card(self.card)
         self.assertEqual(len(self.player.hand), 1)
 
+    def test_hand_is_sorted_after_adding_cards(self):
+        """Test that the player's hand remains sorted after adding cards."""
+        card1 = Card(Suit.HEARTS, Rank.SEVEN)
+        card2 = Card(Suit.DIAMONDS, Rank.KING)
+        card3 = Card(Suit.HEARTS, Rank.ACE)
+
+        # Add cards in a random order
+        self.player.add_card(card1)
+        self.player.add_card(card2)
+        self.player.add_card(card3)
+
+        # Check that the hand is sorted correctly (first by suit, then by rank)
+        self.assertEqual(self.player.hand, [card3, card1, card2])
+
     def test_remove_card_decreases_hand_size(self):
         """Test that removing a card decreases the size of the player's hand by 1."""
         self.player.add_card(self.card)

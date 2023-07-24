@@ -1,6 +1,7 @@
 # lib/board.py
 
-from typing import Dict, List, Optional, Type
+import copy
+from typing import List
 
 from .constants import Suit, Rank
 from .card import Card
@@ -8,17 +9,37 @@ from .card import Card
 
 class Board:
     """
-    Class representing the game board. Each board has a set of cards organized by suit and rank,
-    and methods to add cards to the board, get valid cards, and check if a card is valid.
+    Class representing the game board in a card game. Each board has a set of cards organized by suit and rank.
+    The cards on the board are represented as a matrix of booleans where each cell corresponds to a card identified by its suit and rank.
+    The value in a cell is True if the corresponding card is on the board, False otherwise.
+
+    The board provides methods to add cards to the board, get valid cards, and check if a card is valid.
+    It also provides a property to access a copy of the internal matrix representing the game board.
     """
 
     def __init__(self) -> None:
         """
-        Initializes an empty board for the game.
+        Initializes an empty board for the game. The board is represented as a matrix of booleans
+        where each cell corresponds to a card identified by its suit and rank.
+        The value in a cell is True if the corresponding card is on the board, False otherwise.
         """
 
-        self.__board: Dict[Suit, List[Optional[Card]]] = {
-            suit: [None] * len(Rank) for suit in Suit}
+        self.__matrix: list[list[bool]] = [[False for _ in range(
+            len(Rank))] for _ in range(len(Suit))]
+
+    @property
+    def matrix(self) -> list[list[bool]]:
+        """
+        Provides a deep copy of the internal matrix representing the game board.
+
+        Each cell in the returned matrix corresponds to a card identified by its suit and rank.
+        The value in a cell is True if the corresponding card is on the board, and False otherwise.
+        This allows for safe interaction with the board state without modifying the original data.
+
+        :return: A deep copy of the board's internal matrix.
+        """
+
+        return copy.deepcopy(self.__matrix)
 
     def add_card(self, card: Card) -> None:
         """
@@ -28,8 +49,10 @@ class Board:
         :param card: Card to be added to the board.
         """
 
+        if not (0 <= card.suit.value - 1 < len(Suit) and 0 <= card.rank.value - 1 < len(Rank)):
+            raise ValueError(f"Invalid card: {card}")
         if self.is_valid_card(card):
-            self.__board[card.suit][card.rank.value - 1] = card
+            self.__matrix[card.suit.value - 1][card.rank.value - 1] = True
         else:
             raise ValueError(f"Invalid card: {card}")
 
@@ -53,18 +76,18 @@ class Board:
         :return: Boolean indicating whether the card is valid.
         """
 
-        if self.__has_card(card):
+        if self.__is_card_on_board(card):
             return False
 
-        if not self.__has_card_by_suit_rank(Suit.HEARTS, Rank.SEVEN):
+        if not self.__is_card_on_board_by_suit_rank(Suit.HEARTS, Rank.SEVEN):
             return card == Card(Suit.HEARTS, Rank.SEVEN)
 
-        if self.__is_seven_of_any_suit(card) or self.__is_adjacent_to_existing_card(card):
+        if self.__is_card_seven_of_any_suit(card) or self.__is_card_adjacent_to_existing_card(card):
             return True
 
         return False
 
-    def __is_seven_of_any_suit(self, card: Card) -> bool:
+    def __is_card_seven_of_any_suit(self, card: Card) -> bool:
         """
         Checks if a card is a seven of any suit.
         Returns a boolean indicating whether the card is a seven.
@@ -75,7 +98,7 @@ class Board:
 
         return card.rank == Rank.SEVEN
 
-    def __is_adjacent_to_existing_card(self, card: Card) -> bool:
+    def __is_card_adjacent_to_existing_card(self, card: Card) -> bool:
         """
         Checks if a card is adjacent (in rank) to an existing card on the board in the same suit.
         Returns a boolean indicating whether the card is adjacent to an existing card.
@@ -84,9 +107,9 @@ class Board:
         :return: Boolean indicating whether the card is adjacent to an existing card.
         """
 
-        return self.__has_card_by_suit_rank(card.suit, card.rank.get_rank_below()) or self.__has_card_by_suit_rank(card.suit, card.rank.get_rank_above())
+        return self.__is_card_on_board_by_suit_rank(card.suit, card.rank.get_rank_below()) or self.__is_card_on_board_by_suit_rank(card.suit, card.rank.get_rank_above())
 
-    def __has_card(self, card: Card) -> bool:
+    def __is_card_on_board(self, card: Card) -> bool:
         """
         Checks if a card is already on the board.
         Returns a boolean indicating whether the card is on the board.
@@ -95,11 +118,11 @@ class Board:
         :return: Boolean indicating whether the card is on the board.
         """
 
-        return self.__has_card_by_suit_rank(card.suit, card.rank)
+        return self.__is_card_on_board_by_suit_rank(card.suit, card.rank)
 
-    def __has_card_by_suit_rank(self, suit: Suit, rank: Rank) -> bool:
+    def __is_card_on_board_by_suit_rank(self, suit: Suit, rank: Rank) -> bool:
         """
-        Checks if a card of a certain suit and rank is on the board.
+        Checks if a card of a certain suit and rank is already on the board.
         Returns a boolean indicating whether the card is on the board.
 
         :param suit: Suit of the card to be checked.
@@ -107,4 +130,8 @@ class Board:
         :return: Boolean indicating whether the card is on the board.
         """
 
-        return self.__board[suit][rank.value - 1] is not None
+        if not (0 <= suit.value - 1 < len(Suit) and 0 <= rank.value - 1 < len(Rank)):
+            raise ValueError(
+                f"Invalid card for suit: {suit.value} or rank: {rank.value}")
+
+        return self.__matrix[suit.value - 1][rank.value - 1] is True

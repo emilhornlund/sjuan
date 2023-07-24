@@ -1,5 +1,6 @@
 # lib/player.py
 
+import bisect
 from typing import List, Type
 
 from .card import Card
@@ -39,7 +40,7 @@ class Player:
         :param card: Card to be added to the player's hand.
         """
 
-        self.__hand.append(card)
+        bisect.insort(self.__hand, card)
 
     def remove_card(self, card: Card) -> None:
         """
