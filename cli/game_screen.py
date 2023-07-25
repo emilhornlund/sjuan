@@ -1,12 +1,11 @@
 from typing import List, Tuple
 
-from lib.player import Player
-
 from .screen import Screen
 
+from lib.action import Action
+from lib.player import Player
 from lib.game import Game
-from lib.card import Card
-from lib.constants import Action, Suit, Rank
+from lib.constants import Suit, Rank
 
 
 class GameScreen(Screen):
@@ -47,53 +46,14 @@ class GameScreen(Screen):
 
         self.clear()
         print(f"It's {self.__game.turn.player.name}'s turn.\n")
-        actions = self.__get_turn_actions()
-        self.__render(actions)
+        actions = self.__game.turn.actions
+        self.__render(actions=actions)
         action_index = self.get_number_input(
             f"Please select an action (1-{len(actions)}): ", 1, len(actions)) - 1
-        self.__execute_action(actions[action_index])
+        action_choice = list(actions)[action_index]
+        self.__game.execute_action(action=action_choice)
 
-    def __execute_action(self, action: Tuple[Action, Card]) -> None:
-        """
-        Executes the selected action.
-
-        :param action: Tuple containing the selected action and a card if needed
-        :return: None
-        """
-
-        if action[0] == Action.PLAY_ALL_CARDS:
-            self.__game.play_all_cards()
-        elif action[0] == Action.PLAY_CARD:
-            self.__game.play_card(action[1])
-        elif action[0] == Action.GIVE_CARD:
-            self.__game.give_card(action[1])
-        elif action[0] == Action.TAKE_CARD:
-            self.__game.take_card()
-        elif action[0] == Action.PASS_TURN:
-            self.__game.pass_turn()
-
-    def __get_turn_actions(self) -> List[Tuple[Action, Card]]:
-        """
-        Gets all the possible actions for the current turn.
-
-        :return: List of possible actions
-        """
-
-        actions: List[Tuple[Action, Card]] = []
-        for action in self.__game.turn.actions:
-            if action is Action.PLAY_ALL_CARDS:
-                actions.append((action, None))
-            elif action is Action.PLAY_CARD:
-                for card in self.__game.turn.valid_cards:
-                    actions.append((action, card))
-            elif action is Action.GIVE_CARD:
-                for card in self.__game.turn.player.hand:
-                    actions.append((action, card))
-            elif action is Action.TAKE_CARD or action is Action.PASS_TURN:
-                actions.append((action, None))
-        return actions
-
-    def __render(self, actions: List[Tuple[Action, Card]]) -> None:
+    def __render(self, actions: List[Action]) -> None:
         """
         Renders the game board, the player's hand, and the possible actions.
 
@@ -203,7 +163,7 @@ class GameScreen(Screen):
             output += f"| {tmp.ljust(25)} |\n"
         return (output.splitlines(), 27)
 
-    def __get_action_lines(self, actions: List[Tuple[Action, Card]]) -> Tuple[list[str], int]:
+    def __get_action_lines(self, actions: List[Action]) -> Tuple[list[str], int]:
         """
         Gets the lines of the actions that need to be printed.
 
@@ -213,19 +173,6 @@ class GameScreen(Screen):
 
         output = ""
         for i, action in enumerate(actions):
-            tmp = ""
-            if action[0] == Action.PLAY_ALL_CARDS:
-                tmp = f"Play all cards"
-            elif action[0] == Action.PLAY_CARD:
-                tmp = f"Play {action[1].rank.name} of {action[1].suit.name}"
-            elif action[0] == Action.GIVE_CARD:
-                tmp = f"Give {action[1].rank.name} of {action[1].suit.name}"
-            elif action[0] == Action.TAKE_CARD:
-                tmp = f"Take card"
-            elif action[0] == Action.PASS_TURN:
-                tmp = f"Pass turn"
-            else:
-                raise ValueError("Unknown action")
-            tmp = f"({i + 1}) {tmp}"
+            tmp = f"({i + 1}) {action}"
             output += f"| {tmp.ljust(36)} |\n"
         return (output.splitlines(), 40)

@@ -1,36 +1,35 @@
 # lib/turn.py
 
-from .card import Card
-from .constants import Action
+from typing import Set
+
+from .action import Action
 from .player import Player
 
 
 class Turn:
     """
-    Class representing a turn in the card game. It includes the actions available,
-    the current player, and the valid cards that can be played.
+    Class representing a turn in the card game. It includes the actions available and
+    the current player.
     """
 
-    def __init__(self, actions: list[Action], player: Player, valid_cards: list[Card]) -> None:
+    def __init__(self, actions: Set[Action], player: Player) -> None:
         """
         Constructor for the Turn class.
 
-        :param actions: List of actions that can be performed during the turn.
+        :param actions: Set of actions that can be performed during the turn.
         :param player: The current player.
-        :param valid_cards: List of valid cards that can be played.
         :return: None
         """
 
-        self.__actions: list[Action] = actions
+        self.__actions: Set[Action] = actions
         self.__player: Player = player
-        self.__valid_cards: list[Card] = valid_cards
 
     @property
-    def actions(self) -> list[Action]:
+    def actions(self) -> Set[Action]:
         """
         Get the actions that can be performed during the turn.
 
-        :return: List of actions.
+        :return: Set of actions.
         """
 
         return self.__actions
@@ -45,12 +44,12 @@ class Turn:
 
         return self.__player
 
-    @property
-    def valid_cards(self) -> list[Card]:
+    def has_action(self, action: Action) -> bool:
         """
-        Get the valid cards that can be played during the turn.
+        Check if a particular action is available in the current turn.
 
-        :return: List of valid cards.
+        :param action: The action to check.
+        :return: True if the action is available, False otherwise.
         """
 
-        return self.__valid_cards
+        return any(__action == action for __action in self.__actions)

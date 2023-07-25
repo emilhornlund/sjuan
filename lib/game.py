@@ -1,12 +1,13 @@
 # lib/game.py
 
-from typing import List, NamedTuple, Optional
+from typing import List, NamedTuple, Optional, Set
 
-from lib.ai_player import AIMove, AIPlayer
 
+from .action_decider import ActionDecider
+from .action import Action, ActionType
 from .board import Board
 from .card import Card
-from .constants import Action, Suit, Rank
+from .constants import Suit, Rank
 from .deck import Deck
 from .player import Player, PlayerType
 from .turn import Turn
@@ -19,7 +20,7 @@ class PlayerInfo(NamedTuple):
 
 class Game:
     """
-    Class representing the "Sjuan" card game with given rules and player actions.
+    Main Game class that encapsulates all the game logic.
     """
 
     def __init__(self, player_infos: List[PlayerInfo]) -> None:
@@ -58,7 +59,7 @@ class Game:
 
         self.__deck.shuffle()
         self.__deal_cards()
-        self.__determine_initial_turn()
+        self.__start_turn()
 
     @property
     def turn(self) -> Turn:
@@ -72,111 +73,81 @@ class Game:
 
     @property
     def board(self) -> List[List[bool]]:
+        """
+        Get the current state of the board.
+
+        :return: A 2D matrix representing the current state of the board.
+        """
+
         return self.__board.matrix
 
-    def play_all_cards(self) -> None:
+    def execute_action(self, action: Action) -> None:
         """
-        Current player plays all their cards.
+        Execute a given action in the game.
 
+        :param action: An Action object representing the action to be performed.
         :return: None
         """
 
-        if Action.PLAY_ALL_CARDS not in self.__current_turn.actions:
-            raise ValueError(
-                f"Invalid action in {self.__current_turn.actions}")
+        self.__validate_action(action=action)
 
-        if not self.__is_current_player_all_cards_valid():
-            raise ValueError(
-                f"Invalid action in {self.__current_turn.actions}")
+        if action.type is ActionType.PLAY_ALL_CARDS:
+            for card in self.__current_player.hand:
+                self.__current_player.remove_card(card=card)
+                self.__board.add_card(card=card)
 
-        for card in self.__current_player.hand:
-            self.__current_player.remove_card(card)
-            self.__board.add_card(card)
+        elif action.type is ActionType.PLAY_CARD:
+            self.__current_player.remove_card(card=action.card)
+            self.__board.add_card(card=action.card)
 
-        self.__advance_turn(Action.PLAY_ALL_CARDS, None)
+        elif action.type is ActionType.GIVE_CARD:
+            self.__current_turn.player.remove_card(action.card)
+            self.__current_player.add_card(action.card)
 
-    def play_card(self, card: Card) -> None:
-        """
-        Current player plays a card.
-
-        :param card: Card instance to be played.
-        :return: None
-        """
-
-        if Action.PLAY_CARD not in self.__current_turn.actions:
-            raise ValueError(
-                f"Invalid action in {self.__current_turn.actions}")
-
-        if not self.__current_player.has_card(card):
-            raise ValueError(f"Invalid card: {card}")
-
-        self.__current_player.remove_card(card)
-        self.__board.add_card(card)
-        self.__advance_turn(Action.PLAY_CARD, card)
-
-    def take_card(self) -> None:
-        """
-        Current player takes a card.
-
-        :return: None
-        """
-        if Action.TAKE_CARD not in self.__current_turn.actions:
-            raise ValueError(
-                f"Invalid action in {self.__current_turn.actions}")
-
-        self.__advance_turn(Action.TAKE_CARD, None)
-
-    def give_card(self, card: Card) -> None:
-        """
-        Previous player gives a card.
-
-        :param card: Card instance to be given.
-        :return: None
-        """
-
-        if Action.GIVE_CARD not in self.__current_turn.actions:
-            raise ValueError(
-                f"Invalid action in {self.__current_turn.actions}")
-
-        if not self.__current_turn.player.has_card(card):
-            raise ValueError(f"Invalid card {card}")
-
-        self.__current_turn.player.remove_card(card)
-        self.__current_player.add_card(card)
-        self.__advance_turn(Action.GIVE_CARD, card)
-
-    def pass_turn(self) -> None:
-        """
-        Current player passes the turn.
-
-        :return: None
-        """
-
-        if Action.PASS_TURN not in self.__current_turn.actions:
-            raise ValueError(
-                f"Invalid action in {self.__current_turn.actions}")
-
-        self.__advance_turn(Action.PASS_TURN, None)
+        self.__advance_turn(action=action)
 
     @property
     def finished_players(self) -> List[Player]:
         """
-        Get the list of players who have finished their cards, in the order they finished.
+        Get a list of players who have finished the game.
 
-        :return: List of finished players.
+        :return: A list of Player objects who have finished the game.
         """
+
         return self.__finished_players
 
     def is_finished(self) -> bool:
         """
-        Checks if the game is finished.
-
-        The game is considered finished when the number of players who have finished playing their cards 
-        is equal to the total number of players in the game.
+        Check whether the game is finished or not.
 
         :return: True if the game is finished, False otherwise.
         """
+
         return len(self.finished_players) == len(self.__players)
+
+    def __validate_action(self, action: Action) -> None:
+        """
+        Validate the given action.
+
+        :param action: An Action object representing the action to be validated.
+        :return: None
+        """
+
+        if not self.__current_turn.has_action(action=action):
+            raise ValueError(f"Invalid action {action}")
+
+        if action.type in {ActionType.PLAY_CARD, ActionType.GIVE_CARD}:
+            if not action.card:
+                raise ValueError(f"Invalid action {action.type} without card")
+            elif (action.type is ActionType.PLAY_CARD and not self.__current_player.has_card(card=action.card)) or (action.type is ActionType.GIVE_CARD and not self.__current_turn.player.has_card(card=action.card)):
+                raise ValueError(
+                    f"Invalid card {action.card} for action {action.type}")
+        else:
+            if action.type is ActionType.PLAY_ALL_CARDS and not self.__is_current_player_all_cards_valid():
+                raise ValueError(f"Invalid action {action.type}")
+            elif action.card:
+                raise ValueError(
+                    f"Invalid card {action.card} for action {action.type}")
 
     def __deal_cards(self) -> None:
         """
@@ -206,9 +177,9 @@ class Game:
 
         raise ValueError(f"Unable to determine player start index")
 
-    def __determine_initial_turn(self) -> None:
+    def __start_turn(self) -> None:
         """
-        Determine the initial turn of the game.
+        Starts the first turn of the game.
 
         :return: None
         """
@@ -221,91 +192,111 @@ class Game:
             raise ValueError(
                 f"Unexpected error, initial player missing {seven_of_hearts}")
 
+        actions: Set[Action] = set()
+        actions.add(Action(type=ActionType.PLAY_CARD, card=seven_of_hearts))
+
         self.__current_turn = Turn(
-            [Action.PLAY_CARD], self.__current_player, [seven_of_hearts])
+            actions=actions, player=self.__current_player)
 
         if self.__current_turn.player.type is PlayerType.AI:
-            self.__execute_ai_move()
+            self.__advance_turn_decision()
 
-    def __advance_turn(self, action: Action, card: Optional[Card] = None) -> None:
+    def __advance_turn(self, action: Action) -> None:
         """
-        Advance the turn based on the given action and card. If the action involves playing or giving a card,
-        checks whether the current player has no cards left and, if so, adds them to the list of finished players.
+        Advance the turn based on the given action.
 
-        :param action: Last action taken.
-        :param card: Last card played or given card.
+        :param action: An Action object representing the last action taken.
         :return: None
         """
 
-        if action in [Action.PLAY_CARD, Action.PLAY_ALL_CARDS, Action.GIVE_CARD] and len(self.__current_turn.player.hand) == 0:
+        if action.type in {ActionType.PLAY_CARD, ActionType.PLAY_ALL_CARDS, ActionType.GIVE_CARD} and not self.__current_turn.player.hand:
             self.__finished_players.append(self.__current_turn.player)
 
         if len(self.__finished_players) == len(self.__players):
             return
 
-        if action is Action.PLAY_CARD:
-            if card is None:
+        if action.type is ActionType.PLAY_CARD:
+            if action.card is None:
                 raise ValueError("Unexpected error, card was not played")
-            self.__advance_turn_play_card(card)
-        elif action is Action.TAKE_CARD:
+            self.__advance_turn_play_card(card=action.card)
+        elif action.type is ActionType.TAKE_CARD:
             self.__advance_turn_take_card()
         else:
             self.__advance_turn_other()
 
         if self.__current_turn.player.type is PlayerType.AI:
-            self.__execute_ai_move()
+            self.__advance_turn_decision()
 
     def __advance_turn_play_card(self, card: Card) -> None:
         """
         Handle the case when the last action was PLAY_CARD.
 
-        :param card: The card being played
+        :param card: A Card object representing the last card played.
         :return: None
         """
 
         if card is None:
             raise ValueError("Unexpected error, card was not played")
 
+        actions: Set[Action] = set()
+
         if (card.rank is Rank.ACE or card.rank is Rank.KING) and len(self.__current_player_valid_cards) > 0:
-            actions = [
-                Action.PLAY_CARD, Action.PLAY_ALL_CARDS, Action.PASS_TURN
-            ] if self.__is_current_player_all_cards_valid() else [
-                Action.PLAY_CARD, Action.PASS_TURN
-            ]
-            self.__current_turn = Turn(
-                actions, self.__current_player, self.__current_player_valid_cards)
-        else:
-            self.__current_turn = Turn(
-                [Action.PASS_TURN], self.__current_player, [])
+            if self.__is_current_player_all_cards_valid():
+                actions.add(Action(type=ActionType.PLAY_ALL_CARDS))
+            for card in self.__current_player_valid_cards:
+                actions.add(Action(type=ActionType.PLAY_CARD, card=card))
+
+        actions.add(Action(type=ActionType.PASS_TURN))
+
+        self.__current_turn = Turn(
+            actions=actions, player=self.__current_player)
 
     def __advance_turn_take_card(self) -> None:
         """
         Handle the case when the last action was TAKE_CARD.
+
+        :return: None
         """
 
+        actions: Set[Action] = set()
+        for card in self.__previous_player.hand:
+            actions.add(Action(type=ActionType.GIVE_CARD, card=card))
+
         self.__current_turn = Turn(
-            [Action.GIVE_CARD], self.__previous_player, self.__previous_player.hand)
+            actions=actions, player=self.__previous_player)
 
     def __advance_turn_other(self) -> None:
         """
-        Handle the case when the last action was either GIVE_CARD nor PASS_TURN.
+        Handle the case when the last action was neither PLAY_CARD nor TAKE_CARD.
 
         :return: None
         """
 
         self.__advance_player()
 
+        actions: Set[Action] = set()
+
         if len(self.__current_player_valid_cards) > 0:
-            actions = [
-                Action.PLAY_CARD, Action.PLAY_ALL_CARDS
-            ] if self.__is_current_player_all_cards_valid() else [
-                Action.PLAY_CARD
-            ]
-            self.__current_turn = Turn(
-                actions, self.__current_player, self.__current_player_valid_cards)
+            if self.__is_current_player_all_cards_valid():
+                actions.add(Action(type=ActionType.PLAY_ALL_CARDS))
+            for card in self.__current_player_valid_cards:
+                actions.add(Action(type=ActionType.PLAY_CARD, card=card))
         else:
-            self.__current_turn = Turn(
-                [Action.TAKE_CARD], self.__current_player, [])
+            actions.add(Action(type=ActionType.TAKE_CARD))
+
+        self.__current_turn = Turn(
+            actions=actions, player=self.__current_player)
+
+    def __advance_turn_decision(self) -> None:
+        """
+        Execute the action decision making for the current turn.
+
+        :return: None
+        """
+
+        action = ActionDecider.decide_action(
+            self.__board.matrix, self.__current_turn)
+        self.execute_action(action)
 
     @property
     def __current_player(self) -> Player:
@@ -320,18 +311,18 @@ class Game:
     @property
     def __current_player_valid_cards(self) -> List[Card]:
         """
-        Get valid cards that the current player can play.
+        Get a list of valid cards that the current player can play.
 
-        :return: List of valid card instances.
+        :return: A list of Card objects that the current player can play.
         """
 
         return self.__board.get_valid_cards(self.__current_player.hand)
 
     def __is_current_player_all_cards_valid(self) -> bool:
         """
-        Checks if all the player's cards can be played.
+        Check whether all the cards of the current player are valid or not.
 
-        :return: True if the all the player's cards can be played, False otherwise.
+        :return: True if all the cards of the current player are valid, False otherwise.
         """
 
         return self.__board.get_valid_cards(self.__current_player.hand) == self.__current_player.hand
@@ -356,8 +347,7 @@ class Game:
 
     def __advance_player(self) -> None:
         """
-        Advance the current player index until a player with cards is found.
-        Raises an exception if no such player is found after one full loop over the player list.
+        Move the turn to the next player.
 
         :return: None
         """
@@ -369,25 +359,3 @@ class Game:
                 return
 
         raise ValueError("No players with cards were found.")
-
-    def __execute_ai_move(self) -> None:
-        """
-        Execute the AI player's move for the current turn.
-
-        :return: None
-        """
-
-        move: AIMove = AIPlayer.play_turn(
-            self.__board.matrix, self.__current_turn)
-        if move.action == Action.PLAY_ALL_CARDS:
-            self.play_all_cards()
-        elif move.action == Action.PLAY_CARD:
-            self.play_card(move.card)
-        elif move.action == Action.GIVE_CARD:
-            self.give_card(move.card)
-        elif move.action == Action.TAKE_CARD:
-            self.take_card()
-        elif move.action == Action.PASS_TURN:
-            self.pass_turn()
-        else:
-            raise ValueError("Unknown move by AI")

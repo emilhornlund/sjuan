@@ -82,16 +82,3 @@ class Rank(Enum):
             return Rank.ACE
 
         return Rank(self.value - 1)
-
-
-class Action(Enum):
-    """
-    Enum class to represent the possible actions a player can take in the game. 
-    Each action is an auto-assigned Enum member.
-    """
-
-    PLAY_ALL_CARDS = auto()
-    PLAY_CARD = auto()
-    TAKE_CARD = auto()
-    GIVE_CARD = auto()
-    PASS_TURN = auto()

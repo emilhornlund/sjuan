@@ -42,4 +42,4 @@ class GameRulesScreen(Screen):
 * the player has in their hand can be played, they are laid out and   *
 * the player wins.                                                    *
 ***********************************************************************\n""")
-        input("Press any key to continue")
+        input("Press return to continue")

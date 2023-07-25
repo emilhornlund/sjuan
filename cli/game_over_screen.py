@@ -33,4 +33,4 @@ class GameOverScreen(Screen):
         self.print_menu_screen("Game Over", "Podium:", map(
             lambda player: f"{player.name} ({player.type})", self.__finished_players))
 
-        input("Press any key to continue")
+        input("Press return to continue")

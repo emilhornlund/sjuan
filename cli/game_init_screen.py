@@ -59,7 +59,7 @@ class GameInitScreen(Screen):
                     name=ai_player_name, type=PlayerType.AI))
 
         self.__print_screen(game_mode, player_infos)
-        input("Press any key to start your new game")
+        input("Press return to start the game")
 
         return Game(player_infos=player_infos)
 
