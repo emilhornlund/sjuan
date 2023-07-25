@@ -2,7 +2,8 @@ from typing import List, Tuple
 
 from .screen import Screen
 
-from lib.action import Action
+from lib.action import Action, ActionType
+from lib.action_decider import ActionDecider
 from lib.card import Suit, Rank
 from lib.game import Game
 from lib.player import Player
@@ -171,8 +172,13 @@ class GameScreen(Screen):
         :return: Tuple containing a list of strings representing the actions and the width of the actions.
         """
 
+        best_action = ActionDecider.decide_action(
+            self.__game.board, self.__game.turn)
+
         output = ""
         for i, action in enumerate(actions):
-            tmp = f"({i + 1}) {action}"
+            tmp_best = f" (*)" if action == best_action and action.type in {
+                ActionType.PLAY_ALL_CARDS, ActionType.PLAY_CARD, ActionType.GIVE_CARD} and len(actions) > 1 else ""
+            tmp = f"({i + 1}) {action}{tmp_best}"
             output += f"| {tmp.ljust(36)} |\n"
         return (output.splitlines(), 40)
