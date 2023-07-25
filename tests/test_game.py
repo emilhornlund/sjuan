@@ -3,14 +3,19 @@
 import unittest
 from lib.card import Card
 from lib.constants import Action, Suit, Rank
-from lib.game import Game, GameMode
+from lib.game import Game, PlayerInfo
+from lib.player import PlayerType
 
 
 class TestGame(unittest.TestCase):
     def setUp(self):
         """Set up a game object for use in test cases."""
 
-        self.game = Game(GameMode.PARTY, ["Bob", "Alice", "Ted", "Eve"])
+        self.game = Game(player_infos=[
+            PlayerInfo(name="Bob", type=PlayerType.HUMAN),
+            PlayerInfo(name="Alice", type=PlayerType.HUMAN),
+            PlayerInfo(name="Ted", type=PlayerType.HUMAN),
+            PlayerInfo(name="Eve", type=PlayerType.HUMAN)])
 
     def test_game_initialization(self):
         """Test that a new game is correctly initialized."""

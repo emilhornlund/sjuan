@@ -1,26 +1,18 @@
 # lib/game.py
 
-from enum import Enum
-from typing import List
+from typing import List, NamedTuple
 
 from .board import Board
 from .card import Card
 from .constants import Action, Suit, Rank
 from .deck import Deck
-from .player import Player
+from .player import Player, PlayerType
 from .turn import Turn
 
 
-class GameMode(Enum):
-    SOLO = 1
-    PARTY = 2
-
-    def __repr__(self) -> str:
-        if self is GameMode.SOLO:
-            return "Solo"
-        if self is GameMode.PARTY:
-            return "Party"
-        raise ValueError("Unknown game mode")
+class PlayerInfo(NamedTuple):
+    name: str
+    type: PlayerType
 
 
 class Game:
@@ -28,16 +20,14 @@ class Game:
     Class representing the "Sjuan" card game with given rules and player actions.
     """
 
-    def __init__(self, game_mode: GameMode, player_names: List[str]) -> None:
+    def __init__(self, player_infos: List[PlayerInfo]) -> None:
         """
         Constructor for the Game class.
 
-        :param game_mode: Choosen game mode.
         :param player_names: List of player names.
         """
 
-        self.__game_mode: GameMode = game_mode
-        self.__player_names: List[str] = player_names
+        self.__player_infos: List[PlayerInfo] = player_infos
         self.__finished_players: List[Player] = []
         self.reset()
 
@@ -47,7 +37,7 @@ class Game:
         """
 
         self.__players: List[Player] = [
-            Player(name) for name in self.__player_names]
+            Player(player_info.name, player_info.type) for player_info in self.__player_infos]
         self.__finished_players.clear()
         self.__current_player_index: int = 0
         self.__deck: Deck = Deck()

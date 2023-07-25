@@ -1,9 +1,35 @@
 # lib/player.py
 
 import bisect
-from typing import List, Type
+from enum import Enum, auto
+from typing import List, Type, NoReturn
 
 from .card import Card
+
+
+class PlayerType(Enum):
+    """
+    Enum representing different types of players in a game.
+
+    Each player type can be either HUMAN or AI.
+    """
+
+    HUMAN = auto()
+    AI = auto()
+
+    def __str__(self):
+        """
+        Return a string representation of the enum member.
+
+        Returns:
+            str: String representation of the enum member.
+        """
+        if self == PlayerType.HUMAN:
+            return "Human"
+        elif self == PlayerType.AI:
+            return "AI"
+        else:
+            return "Unknown PlayerType"
 
 
 class Player:
@@ -13,14 +39,16 @@ class Player:
     and compare players.
     """
 
-    def __init__(self, name: str) -> None:
+    def __init__(self, name: str, type: PlayerType) -> NoReturn:
         """
         Initializes a player with a given name and an empty hand.
 
         :param name: Name of the player.
+        :return: NoReturn
         """
 
         self.__name: str = name
+        self.__type: PlayerType = type
         self.__hand: List[Card] = []
 
     @property
@@ -33,20 +61,32 @@ class Player:
 
         return self.__name
 
-    def add_card(self, card: Card) -> None:
+    @property
+    def type(self) -> PlayerType:
+        """
+        Returns the player's type.
+
+        :return: Player's type.
+        """
+
+        return self.__type
+
+    def add_card(self, card: Card) -> NoReturn:
         """
         Adds a card to the player's hand.
 
         :param card: Card to be added to the player's hand.
+        :return: NoReturn
         """
 
         bisect.insort(self.__hand, card)
 
-    def remove_card(self, card: Card) -> None:
+    def remove_card(self, card: Card) -> NoReturn:
         """
         Removes a card from the player's hand.
 
         :param card: Card to be removed from the player's hand.
+        :return: NoReturn
         """
 
         self.__hand.remove(card)
@@ -88,4 +128,4 @@ class Player:
         :return: String representation of the player.
         """
 
-        return f"Player: {self.__name}, Hand: {self.__hand}"
+        return f"Player: {self.__name}, Type: {self.__type}, Hand: {self.__hand}"

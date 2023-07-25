@@ -2,19 +2,20 @@
 
 import unittest
 from lib.constants import Suit, Rank
-from lib.player import Player
+from lib.player import Player, PlayerType
 from lib.card import Card
 
 
 class TestPlayer(unittest.TestCase):
     def setUp(self):
         """Set up a player object and a card object for use in test cases."""
-        self.player = Player("Alice")
+        self.player = Player("Alice", PlayerType.HUMAN)
         self.card = Card(Suit.HEARTS, Rank.SEVEN)
 
-    def test_player_creation_with_name_and_empty_hand(self):
+    def test_player_creation_with_name_and_type_and_empty_hand(self):
         """Test that a player is properly initialized with a name and an empty hand."""
         self.assertEqual(self.player.name, "Alice")
+        self.assertEqual(self.player.type, PlayerType.HUMAN)
         self.assertEqual(len(self.player.hand), 0)
 
     def test_add_card_increases_hand_size(self):
@@ -49,27 +50,28 @@ class TestPlayer(unittest.TestCase):
         self.player.remove_card(self.card)
         self.assertFalse(self.player.has_card(self.card))
 
-    def test_players_with_same_name_and_hand_are_equal(self):
+    def test_players_with_same_name_are_equal(self):
         """Test that two players with the same name and hand are considered equal."""
-        player2 = Player("Alice")
+        player2 = Player("Alice", PlayerType.HUMAN)
         player2.add_card(Card(Suit.HEARTS, Rank.SEVEN))
         self.assertEqual(self.player, player2)
 
     def test_players_with_different_name_or_hand_are_not_equal(self):
         """Test that two players with different names or hands are not considered equal."""
-        player2 = Player("Bob")
+        player2 = Player("Bob", PlayerType.HUMAN)
         player2.add_card(Card(Suit.DIAMONDS, Rank.ACE))
         self.assertNotEqual(self.player, player2)
 
     def test_string_representation_with_empty_hand(self):
         """Test that the string representation of a player with an empty hand is as expected."""
-        self.assertEqual(str(self.player), "Player: Alice, Hand: []")
+        self.assertEqual(str(self.player),
+                         "Player: Alice, Type: Human, Hand: []")
 
     def test_string_representation_with_cards_in_hand(self):
         """Test that the string representation of a player with cards in their hand is as expected."""
         self.player.add_card(self.card)
         self.assertEqual(str(self.player),
-                         f"Player: Alice, Hand: [{self.card}]")
+                         f"Player: Alice, Type: Human, Hand: [{self.card}]")
 
 
 if __name__ == '__main__':
