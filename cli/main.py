@@ -1,4 +1,5 @@
 from .game_init_screen import GameInitScreen
+from .game_over_screen import GameOverScreen
 from .game_rules_screen import GameRulesScreen
 from .game_screen import GameScreen
 from .intro_screen import IntroScreen, IntroScreenChoice
@@ -26,6 +27,10 @@ def main() -> None:
 
             # Then initialize and run the GameScreen with the created game
             screen = GameScreen(game)
+            finished_players = screen.run()
+
+            # Then initialize and run the GameOverScreen with the finished players
+            screen = GameOverScreen(finished_players=finished_players)
             screen.run()
 
         if choice is IntroScreenChoice.RULES:

@@ -1,5 +1,7 @@
 from typing import List, Tuple, NoReturn
 
+from lib.player import Player
+
 from .screen import Screen
 
 from lib.game import Game
@@ -20,19 +22,21 @@ class GameScreen(Screen):
         :return: NoReturn
         """
 
-        self.game = game
+        self.__game = game
 
-    def run(self) -> NoReturn:
+    def run(self) -> List[Player]:
         """
         The main method of the class that starts the game and handles turns.
 
-        :return: NoReturn
+        :return: List of finished players.
         """
 
-        self.game.start()
+        self.__game.start()
 
-        while not self.game.is_finished():
+        while not self.__game.is_finished():
             self.__handle_turn()
+
+        return self.__game.finished_players
 
     def __handle_turn(self) -> NoReturn:
         """
@@ -42,7 +46,7 @@ class GameScreen(Screen):
         """
 
         self.clear()
-        print(f"It's {self.game.turn.player.name}'s turn.\n")
+        print(f"It's {self.__game.turn.player.name}'s turn.\n")
         actions = self.__get_turn_actions()
         self.__render(actions)
         action_index = self.get_number_input(
@@ -58,15 +62,15 @@ class GameScreen(Screen):
         """
 
         if action[0] == Action.PLAY_ALL_CARDS:
-            self.game.play_all_cards()
+            self.__game.play_all_cards()
         elif action[0] == Action.PLAY_CARD:
-            self.game.play_card(action[1])
+            self.__game.play_card(action[1])
         elif action[0] == Action.GIVE_CARD:
-            self.game.give_card(action[1])
+            self.__game.give_card(action[1])
         elif action[0] == Action.TAKE_CARD:
-            self.game.take_card()
+            self.__game.take_card()
         elif action[0] == Action.PASS_TURN:
-            self.game.pass_turn()
+            self.__game.pass_turn()
 
     def __get_turn_actions(self) -> List[Tuple[Action, Card]]:
         """
@@ -76,14 +80,14 @@ class GameScreen(Screen):
         """
 
         actions: List[Tuple[Action, Card]] = []
-        for action in self.game.turn.actions:
+        for action in self.__game.turn.actions:
             if action is Action.PLAY_ALL_CARDS:
                 actions.append((action, None))
             elif action is Action.PLAY_CARD:
-                for card in self.game.turn.valid_cards:
+                for card in self.__game.turn.valid_cards:
                     actions.append((action, card))
             elif action is Action.GIVE_CARD:
-                for card in self.game.turn.player.hand:
+                for card in self.__game.turn.player.hand:
                     actions.append((action, card))
             elif action is Action.TAKE_CARD or action is Action.PASS_TURN:
                 actions.append((action, None))
@@ -159,7 +163,7 @@ class GameScreen(Screen):
         for suit in Suit:
             rank_text = ""
             for i in range(Rank.KING.value, Rank.SEVEN.value, -1):
-                if self.game.board[suit.value - 1][i - 1]:
+                if self.__game.board[suit.value - 1][i - 1]:
                     rank_text = f"{rank_symbols[Rank(i)]}  " if Rank.TEN != Rank(
                         i) else "10 "
                     break
@@ -168,15 +172,15 @@ class GameScreen(Screen):
 
         # Print the Seven of each suit, if it has been played
         for suit in Suit:
-            output += f"|  7  " if self.game.board[suit.value -
-                                                   1][Rank.SEVEN.value - 1] else "|     "
+            output += f"|  7  " if self.__game.board[suit.value -
+                                                     1][Rank.SEVEN.value - 1] else "|     "
         output += "|\n"
 
         # Print the lowest rank card for each suit
         for suit in Suit:
             rank_text = ""
             for i in range(Rank.ACE.value, Rank.SEVEN.value):
-                if self.game.board[suit.value - 1][i - 1]:
+                if self.__game.board[suit.value - 1][i - 1]:
                     rank_text = f"{rank_symbols[Rank(i)]}  "
                     break
             output += f"|  {rank_text}" if rank_text else "|     "
@@ -193,7 +197,7 @@ class GameScreen(Screen):
 
         max_line_width = 0
         output = ""
-        for card in self.game.turn.player.hand:
+        for card in self.__game.turn.player.hand:
             tmp = f"{card.rank.name} of {card.suit.name}"
             max_line_width = max(max_line_width, len(tmp))
             output += f"| {tmp.ljust(25)} |\n"
