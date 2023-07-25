@@ -8,7 +8,7 @@ from lib.player import PlayerType
 
 
 class TestGame(unittest.TestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         """Set up a game object for use in test cases."""
 
         self.game = Game(player_infos=[
@@ -17,12 +17,12 @@ class TestGame(unittest.TestCase):
             PlayerInfo(name="Ted", type=PlayerType.HUMAN),
             PlayerInfo(name="Eve", type=PlayerType.HUMAN)])
 
-    def test_game_initialization(self):
+    def test_game_initialization(self) -> None:
         """Test that a new game is correctly initialized."""
 
         self.assert_game_reset()
 
-    def test_game_start(self):
+    def test_game_start(self) -> None:
         """Test that a game correctly starts."""
 
         self.game.start()
@@ -32,7 +32,7 @@ class TestGame(unittest.TestCase):
         for player in self.game._Game__players:
             self.assertEqual(len(player.hand), 13)
 
-    def test_game_reset(self):
+    def test_game_reset(self) -> None:
         """Test that a game can be correctly reset."""
 
         self.game.start()
@@ -40,7 +40,7 @@ class TestGame(unittest.TestCase):
         self.game.reset()
         self.assert_game_reset()
 
-    def test_game_first_turn(self):
+    def test_game_first_turn(self) -> None:
         """Test that the first turn of a game is correctly set up."""
 
         self.game.start()
@@ -53,7 +53,7 @@ class TestGame(unittest.TestCase):
         self.assertEqual(self.game.turn.valid_cards, [
                          Card(Suit.HEARTS, Rank.SEVEN)])
 
-    def assert_game_reset(self):
+    def assert_game_reset(self) -> None:
         """Check that a game is correctly reset."""
 
         self.assertEqual(len(self.game._Game__players), 4)
@@ -62,7 +62,7 @@ class TestGame(unittest.TestCase):
         for player in self.game._Game__players:
             self.assertEqual(len(player.hand), 0)
 
-    def test_game_full_round(self):
+    def test_game_full_round(self) -> None:
         """Test that a full round of a game is correctly played."""
 
         self.game.start()
@@ -95,7 +95,7 @@ class TestGame(unittest.TestCase):
         self.assertIn("Ted", finished_player_names)
         self.assertIn("Eve", finished_player_names)
 
-    def test_invalid_play_card(self):
+    def test_invalid_play_card(self) -> None:
         """Test that playing an invalid card raises an error."""
 
         self.game.start()
@@ -107,7 +107,7 @@ class TestGame(unittest.TestCase):
         self.assertEqual(str(context.exception),
                          f"Invalid card: {invalid_card}")
 
-    def test_take_card_when_not_allowed(self):
+    def test_take_card_when_not_allowed(self) -> None:
         """Test that taking a card when not allowed raises an error."""
 
         self.game.start()
@@ -116,7 +116,7 @@ class TestGame(unittest.TestCase):
         self.assertEqual(str(context.exception),
                          f"Invalid action in {[Action.PLAY_CARD]}")
 
-    def test_give_card_when_not_allowed(self):
+    def test_give_card_when_not_allowed(self) -> None:
         """Test that giving a card when not allowed raises an error."""
 
         self.game.start()
@@ -126,7 +126,7 @@ class TestGame(unittest.TestCase):
         self.assertEqual(str(context.exception),
                          f"Invalid action in {[Action.PLAY_CARD]}")
 
-    def test_pass_turn_when_not_allowed(self):
+    def test_pass_turn_when_not_allowed(self) -> None:
         """Test that passing a turn when not allowed raises an error."""
 
         self.game.start()

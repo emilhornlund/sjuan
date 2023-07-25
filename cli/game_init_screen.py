@@ -1,5 +1,5 @@
 from enum import Enum, auto
-from typing import List, Optional, NoReturn
+from typing import List, Optional
 
 from lib.player import PlayerType
 
@@ -63,13 +63,13 @@ class GameInitScreen(Screen):
 
         return Game(player_infos=player_infos)
 
-    def __print_screen(self, game_mode: Optional[GameMode], player_infos: Optional[List[PlayerInfo]]) -> NoReturn:
+    def __print_screen(self, game_mode: Optional[GameMode], player_infos: Optional[List[PlayerInfo]]) -> None:
         """
         Method to print the game setup screen based on the current state of game_mode and player_names.
 
         :param game_mode: The chosen game mode or None if no mode has been chosen yet.
         :param player_names: The list of player names or None if no players have been added yet.
-        :return: NoReturn
+        :return: None
         """
         if game_mode is None:
             self.print_menu_screen("New Game", "Mode", ["Solo", "Party"])

@@ -5,30 +5,30 @@ from lib.deck import Deck
 
 
 class TestDeck(unittest.TestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         """Set up a deck object for use in test cases."""
         self.deck = Deck()
 
-    def test_deck_creation_has_52_cards(self):
+    def test_deck_creation_has_52_cards(self) -> None:
         """Test that a new deck is properly initialized with 52 cards."""
         self.assertEqual(len(self.deck.cards), 52)
 
-    def test_shuffle_changes_card_order(self):
+    def test_shuffle_changes_card_order(self) -> None:
         """Test that shuffling the deck changes the order of the cards."""
         cards_before_shuffling = list(self.deck.cards)
         self.deck.shuffle()
         self.assertNotEqual(cards_before_shuffling, self.deck.cards)
 
-    def test_deal_reduces_deck_size_by_one(self):
+    def test_deal_reduces_deck_size_by_one(self) -> None:
         """Test that dealing a card reduces the size of the deck by 1."""
         self.deck.deal()
         self.assertEqual(len(self.deck.cards), 51)
 
-    def test_string_representation_is_as_expected(self):
+    def test_string_representation_is_as_expected(self) -> None:
         """Test that the string representation of a deck is as expected."""
         self.assertEqual(str(self.deck), "Deck of 52 cards")
 
-    def test_deal_from_empty_deck_raises_error(self):
+    def test_deal_from_empty_deck_raises_error(self) -> None:
         """Test that attempting to deal from an empty deck raises a ValueError."""
         # Remove all cards from the deck
         for _ in range(52):

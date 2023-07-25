@@ -18,6 +18,7 @@ class Turn:
         :param actions: List of actions that can be performed during the turn.
         :param player: The current player.
         :param valid_cards: List of valid cards that can be played.
+        :return: None
         """
 
         self.__actions: list[Action] = actions

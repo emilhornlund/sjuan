@@ -9,7 +9,7 @@ from lib.constants import Suit, Rank
 
 class TestBoard(unittest.TestCase):
 
-    def test_board_get_valid_cards(self):
+    def test_board_get_valid_cards(self) -> None:
         """Test getting valid cards from the board considering the game progression."""
         board = Board()
 
@@ -69,10 +69,10 @@ class TestBoard(unittest.TestCase):
         valid_cards = board.get_valid_cards(all_cards)
         self.assertEqual(valid_cards, [])
 
-    def test_board_is_valid_card(self):
+    def test_board_is_valid_card(self) -> None:
         """Test the validation of a card considering the game progression."""
         # This function is used to add a card to the board and test the valid cards
-        def add_card_and_test(suit, rank, next_rank):
+        def add_card_and_test(suit, rank, next_rank) -> None:
             current_card = Card(suit, rank)
             future_card = Card(suit, next_rank)
 
@@ -128,7 +128,7 @@ class TestBoard(unittest.TestCase):
                     rank.value + 1) if rank.value < Rank.KING.value else None
                 add_card_and_test(suit, rank, next_rank)
 
-    def test_add_invalid_card_raises_error(self):
+    def test_add_invalid_card_raises_error(self) -> None:
         """Test that trying to add an invalid card to the board raises an error."""
         board = Board()
         invalid_card = Card(Suit.HEARTS, Rank.SIX)
@@ -137,7 +137,7 @@ class TestBoard(unittest.TestCase):
         self.assertEqual(str(context.exception),
                          f"Invalid card: {invalid_card}")
 
-    def test_cards_are_hashable(self):
+    def test_cards_are_hashable(self) -> None:
         """Test that cards can be added to a set, which requires them to be hashable."""
         card1 = Card(Suit.HEARTS, Rank.SEVEN)
         card2 = Card(Suit.HEARTS, Rank.SEVEN)

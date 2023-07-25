@@ -2,7 +2,7 @@
 
 import bisect
 from enum import Enum, auto
-from typing import List, Type, NoReturn
+from typing import List, Type
 
 from .card import Card
 
@@ -17,7 +17,7 @@ class PlayerType(Enum):
     HUMAN = auto()
     AI = auto()
 
-    def __str__(self):
+    def __str__(self) -> str:
         """
         Return a string representation of the enum member.
 
@@ -39,12 +39,12 @@ class Player:
     and compare players.
     """
 
-    def __init__(self, name: str, type: PlayerType) -> NoReturn:
+    def __init__(self, name: str, type: PlayerType) -> None:
         """
         Initializes a player with a given name and an empty hand.
 
         :param name: Name of the player.
-        :return: NoReturn
+        :return: None
         """
 
         self.__name: str = name
@@ -71,22 +71,22 @@ class Player:
 
         return self.__type
 
-    def add_card(self, card: Card) -> NoReturn:
+    def add_card(self, card: Card) -> None:
         """
         Adds a card to the player's hand.
 
         :param card: Card to be added to the player's hand.
-        :return: NoReturn
+        :return: None
         """
 
         bisect.insort(self.__hand, card)
 
-    def remove_card(self, card: Card) -> NoReturn:
+    def remove_card(self, card: Card) -> None:
         """
         Removes a card from the player's hand.
 
         :param card: Card to be removed from the player's hand.
-        :return: NoReturn
+        :return: None
         """
 
         self.__hand.remove(card)

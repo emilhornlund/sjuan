@@ -17,6 +17,7 @@ class Card:
 
         :param suit: The suit of the card.
         :param rank: The rank of the card.
+        :return: None
         """
 
         self.suit: Suit = suit

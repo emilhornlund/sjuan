@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from os import system, name
-from typing import List, NoReturn
+from typing import List
 
 
 class Screen(ABC):
@@ -9,12 +9,12 @@ class Screen(ABC):
     """
 
     @abstractmethod
-    def run(self) -> NoReturn:
+    def run(self) -> None:
         """
         Abstract method to be implemented by subclasses. 
         This method will contain the main logic of each individual screen.
 
-        :return: NoReturn
+        :return: None
         """
 
         pass
@@ -43,14 +43,14 @@ class Screen(ABC):
                     value = None  # reset value if it's not a valid integer
         return value
 
-    def print_menu_screen(self, title: str, options_title: str, options: List[str]) -> NoReturn:
+    def print_menu_screen(self, title: str, options_title: str, options: List[str]) -> None:
         """
         Print a menu screen with a title, options title, and a list of options.
 
         :param title: The title of the screen.
         :param options_title: The title of the options section.
         :param options: The list of options to be displayed.
-        :return: NoReturn
+        :return: None
         """
 
         self.clear()
@@ -63,12 +63,12 @@ class Screen(ABC):
             print(f"* {text.ljust(32)} *")
         print("************************************\n")
 
-    def clear(self) -> NoReturn:
+    def clear(self) -> None:
         """
         Clear the console screen. 
         This is OS dependent ('cls' for Windows, 'clear' for Unix systems).
 
-        :return: NoReturn
+        :return: None
         """
 
         if name == 'nt':

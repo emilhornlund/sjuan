@@ -15,6 +15,8 @@ class Deck:
     def __init__(self) -> None:
         """
         Initializes a deck with a standard set of 52 cards.
+
+        :return: None
         """
 
         self.__cards = [Card(suit, rank) for suit in Suit for rank in Rank]
@@ -32,6 +34,8 @@ class Deck:
     def shuffle(self) -> None:
         """
         Shuffles the deck in place using the random.shuffle method.
+
+        :return: None
         """
 
         random.shuffle(self.__cards)

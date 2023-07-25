@@ -22,6 +22,8 @@ class Board:
         Initializes an empty board for the game. The board is represented as a matrix of booleans
         where each cell corresponds to a card identified by its suit and rank.
         The value in a cell is True if the corresponding card is on the board, False otherwise.
+
+        :return: None
         """
 
         self.__matrix: list[list[bool]] = [[False for _ in range(
@@ -47,6 +49,7 @@ class Board:
         Raises a ValueError if the card is not valid.
 
         :param card: Card to be added to the board.
+        :return: None
         """
 
         if not (0 <= card.suit.value - 1 < len(Suit) and 0 <= card.rank.value - 1 < len(Rank)):

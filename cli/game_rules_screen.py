@@ -1,5 +1,3 @@
-from typing import NoReturn
-
 from .screen import Screen
 
 
@@ -8,11 +6,11 @@ class GameRulesScreen(Screen):
     Game Rules Screen class. This class is responsible for showing the rules of the game.
     """
 
-    def run(self) -> NoReturn:
+    def run(self) -> None:
         """
         The main method of the class that shows the rules of the game.
 
-        :return: NoReturn
+        :return: None
         """
 
         self.clear()

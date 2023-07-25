@@ -1,6 +1,6 @@
 # lib/game.py
 
-from typing import List, NamedTuple, NoReturn, Optional
+from typing import List, NamedTuple, Optional
 
 from lib.ai_player import AIMove, AIPlayer
 
@@ -27,6 +27,7 @@ class Game:
         Constructor for the Game class.
 
         :param player_names: List of player names.
+        :return: None
         """
 
         self.__player_infos: List[PlayerInfo] = player_infos
@@ -36,6 +37,8 @@ class Game:
     def reset(self) -> None:
         """
         Reset the game, initialize players, deck, board and current turn.
+
+        :return: None
         """
 
         self.__players: List[Player] = [
@@ -49,6 +52,8 @@ class Game:
     def start(self) -> None:
         """
         Start the game by shuffling the deck, dealing cards and determining the initial turn.
+
+        :return: None
         """
 
         self.__deck.shuffle()
@@ -69,11 +74,11 @@ class Game:
     def board(self) -> List[List[bool]]:
         return self.__board.matrix
 
-    def play_all_cards(self) -> NoReturn:
+    def play_all_cards(self) -> None:
         """
         Current player plays all their cards.
 
-        :return: NoReturn
+        :return: None
         """
 
         if Action.PLAY_ALL_CARDS not in self.__current_turn.actions:
@@ -95,6 +100,7 @@ class Game:
         Current player plays a card.
 
         :param card: Card instance to be played.
+        :return: None
         """
 
         if Action.PLAY_CARD not in self.__current_turn.actions:
@@ -111,6 +117,8 @@ class Game:
     def take_card(self) -> None:
         """
         Current player takes a card.
+
+        :return: None
         """
         if Action.TAKE_CARD not in self.__current_turn.actions:
             raise ValueError(
@@ -123,6 +131,7 @@ class Game:
         Previous player gives a card.
 
         :param card: Card instance to be given.
+        :return: None
         """
 
         if Action.GIVE_CARD not in self.__current_turn.actions:
@@ -139,6 +148,8 @@ class Game:
     def pass_turn(self) -> None:
         """
         Current player passes the turn.
+
+        :return: None
         """
 
         if Action.PASS_TURN not in self.__current_turn.actions:
@@ -170,6 +181,8 @@ class Game:
     def __deal_cards(self) -> None:
         """
         Deal cards to all players one by one from the deck.
+
+        :return: None
         """
 
         tmp_player_index: int = 0
@@ -196,6 +209,8 @@ class Game:
     def __determine_initial_turn(self) -> None:
         """
         Determine the initial turn of the game.
+
+        :return: None
         """
 
         self.__current_player_index = self.__find_player_start_index()
@@ -219,6 +234,7 @@ class Game:
 
         :param action: Last action taken.
         :param card: Last card played or given card.
+        :return: None
         """
 
         if action in [Action.PLAY_CARD, Action.PLAY_ALL_CARDS, Action.GIVE_CARD] and len(self.__current_turn.player.hand) == 0:
@@ -244,6 +260,7 @@ class Game:
         Handle the case when the last action was PLAY_CARD.
 
         :param card: The card being played
+        :return: None
         """
 
         if card is None:
@@ -272,6 +289,8 @@ class Game:
     def __advance_turn_other(self) -> None:
         """
         Handle the case when the last action was either GIVE_CARD nor PASS_TURN.
+
+        :return: None
         """
 
         self.__advance_player()
@@ -339,6 +358,8 @@ class Game:
         """
         Advance the current player index until a player with cards is found.
         Raises an exception if no such player is found after one full loop over the player list.
+
+        :return: None
         """
 
         for _ in range(len(self.__players)):
@@ -349,11 +370,11 @@ class Game:
 
         raise ValueError("No players with cards were found.")
 
-    def __execute_ai_move(self) -> NoReturn:
+    def __execute_ai_move(self) -> None:
         """
         Execute the AI player's move for the current turn.
 
-        :return: NoReturn
+        :return: None
         """
 
         move: AIMove = AIPlayer.play_turn(

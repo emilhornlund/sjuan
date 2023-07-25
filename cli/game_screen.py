@@ -1,4 +1,4 @@
-from typing import List, Tuple, NoReturn
+from typing import List, Tuple
 
 from lib.player import Player
 
@@ -14,12 +14,12 @@ class GameScreen(Screen):
     Game Screen class. This class is responsible for rendering the game board and handling player actions.
     """
 
-    def __init__(self, game: Game) -> NoReturn:
+    def __init__(self, game: Game) -> None:
         """
         Initialize GameScreen with a game instance.
 
         :param game: Game instance
-        :return: NoReturn
+        :return: None
         """
 
         self.__game = game
@@ -38,11 +38,11 @@ class GameScreen(Screen):
 
         return self.__game.finished_players
 
-    def __handle_turn(self) -> NoReturn:
+    def __handle_turn(self) -> None:
         """
         Handles a single turn in the game.
 
-        :return: NoReturn
+        :return: None
         """
 
         self.clear()
@@ -53,12 +53,12 @@ class GameScreen(Screen):
             f"Please select an action (1-{len(actions)}): ", 1, len(actions)) - 1
         self.__execute_action(actions[action_index])
 
-    def __execute_action(self, action: Tuple[Action, Card]) -> NoReturn:
+    def __execute_action(self, action: Tuple[Action, Card]) -> None:
         """
         Executes the selected action.
 
         :param action: Tuple containing the selected action and a card if needed
-        :return: NoReturn
+        :return: None
         """
 
         if action[0] == Action.PLAY_ALL_CARDS:
@@ -93,12 +93,12 @@ class GameScreen(Screen):
                 actions.append((action, None))
         return actions
 
-    def __render(self, actions: List[Tuple[Action, Card]]) -> NoReturn:
+    def __render(self, actions: List[Tuple[Action, Card]]) -> None:
         """
         Renders the game board, the player's hand, and the possible actions.
 
         :param actions: List of possible actions
-        :return: NoReturn
+        :return: None
         """
 
         output = ""
