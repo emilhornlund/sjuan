@@ -3,8 +3,7 @@
 import unittest
 
 from lib.board import Board
-from lib.card import Card
-from lib.constants import Suit, Rank
+from lib.card import Card, Suit, Rank
 
 
 class TestBoard(unittest.TestCase):

@@ -1,9 +1,8 @@
 # tests/test_player.py
 
 import unittest
-from lib.constants import Suit, Rank
+from lib.card import Card, Suit, Rank
 from lib.player import Player, PlayerType
-from lib.card import Card
 
 
 class TestPlayer(unittest.TestCase):

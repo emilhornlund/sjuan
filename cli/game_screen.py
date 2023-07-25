@@ -3,9 +3,9 @@ from typing import List, Tuple
 from .screen import Screen
 
 from lib.action import Action
-from lib.player import Player
+from lib.card import Suit, Rank
 from lib.game import Game
-from lib.constants import Suit, Rank
+from lib.player import Player
 
 
 class GameScreen(Screen):

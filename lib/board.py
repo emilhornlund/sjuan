@@ -3,8 +3,7 @@
 import copy
 from typing import List
 
-from .constants import Suit, Rank
-from .card import Card
+from .card import Card, Suit, Rank
 
 
 class Board:

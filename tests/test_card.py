@@ -2,8 +2,7 @@
 
 import unittest
 
-from lib.constants import Suit, Rank
-from lib.card import Card
+from lib.card import Card, Suit, Rank
 
 
 class TestCard(unittest.TestCase):

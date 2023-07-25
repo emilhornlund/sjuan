@@ -4,8 +4,7 @@ import unittest
 import random
 from lib.action import Action, ActionType
 
-from lib.card import Card
-from lib.constants import Suit, Rank
+from lib.card import Card, Suit, Rank
 from lib.game import Game, PlayerInfo
 from lib.player import PlayerType
 

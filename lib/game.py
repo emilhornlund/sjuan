@@ -6,8 +6,7 @@ from typing import List, NamedTuple, Optional, Set
 from .action_decider import ActionDecider
 from .action import Action, ActionType
 from .board import Board
-from .card import Card
-from .constants import Suit, Rank
+from .card import Card, Suit, Rank
 from .deck import Deck
 from .player import Player, PlayerType
 from .turn import Turn

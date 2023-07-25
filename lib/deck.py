@@ -1,8 +1,7 @@
 # lib/deck.py
 
 import random
-from .constants import Suit, Rank
-from .card import Card
+from .card import Card, Suit, Rank
 
 
 class Deck:
