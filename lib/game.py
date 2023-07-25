@@ -1,6 +1,8 @@
 # lib/game.py
 
-from typing import List, NamedTuple
+from typing import List, NamedTuple, NoReturn
+
+from lib.ai_player import AIMove, AIPlayer
 
 from .board import Board
 from .card import Card
@@ -186,6 +188,9 @@ class Game:
         self.__current_turn = Turn(
             [Action.PLAY_CARD], self.__current_player, [seven_of_hearts])
 
+        if self.__current_turn.player.type is PlayerType.AI:
+            self.__execute_ai_move()
+
     def __advance_turn(self, action: Action, card: Card) -> None:
         """
         Advance the turn based on the given action and card. If the action involves playing or giving a card,
@@ -207,6 +212,9 @@ class Game:
             self.__advance_turn_take_card()
         else:
             self.__advance_turn_other()
+
+        if self.__current_turn.player.type is PlayerType.AI:
+            self.__execute_ai_move()
 
     def __advance_turn_play_card(self, card: Card) -> None:
         """
@@ -298,3 +306,21 @@ class Game:
                 return
 
         raise ValueError("No players with cards were found.")
+
+    def __execute_ai_move(self) -> NoReturn:
+        """
+        Execute the AI player's move for the current turn.
+
+        :return: NoReturn
+        """
+
+        move: AIMove = AIPlayer.play_turn(
+            self.__board.matrix, self.__current_turn)
+        if move.action == Action.PLAY_CARD:
+            self.play_card(move.card)
+        if move.action == Action.GIVE_CARD:
+            self.give_card(move.card)
+        if move.action == Action.TAKE_CARD:
+            self.take_card()
+        if move.action == Action.PASS_TURN:
+            self.pass_turn()
