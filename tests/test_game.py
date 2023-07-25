@@ -69,7 +69,9 @@ class TestGame(unittest.TestCase):
 
         # Simulate a full round of game
         while not self.game.is_finished():
-            if Action.PLAY_CARD in self.game.turn.actions:
+            if Action.PLAY_ALL_CARDS in self.game.turn.actions:
+                self.game.play_all_cards()
+            elif Action.PLAY_CARD in self.game.turn.actions:
                 card_to_play = self.game.turn.valid_cards[0]
                 self.game.play_card(card_to_play)
             elif Action.GIVE_CARD in self.game.turn.actions:

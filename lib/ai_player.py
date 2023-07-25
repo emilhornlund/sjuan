@@ -31,13 +31,17 @@ class AIPlayer:
         """
 
         action_choice: Action = random.choice(turn.actions)
-        if action_choice is Action.PLAY_CARD:
+        if action_choice is Action.PLAY_ALL_CARDS:
+            return AIMove(action=Action.PLAY_ALL_CARDS, card=None)
+        elif action_choice is Action.PLAY_CARD:
             card_choice = random.choice(turn.valid_cards)
             return AIMove(action=Action.PLAY_CARD, card=card_choice)
-        if action_choice is Action.GIVE_CARD:
+        elif action_choice is Action.GIVE_CARD:
             card_choice = random.choice(turn.player.hand)
             return AIMove(action=Action.GIVE_CARD, card=card_choice)
-        if action_choice is Action.TAKE_CARD:
+        elif action_choice is Action.TAKE_CARD:
             return AIMove(action=Action.TAKE_CARD, card=None)
-        if action_choice is Action.PASS_TURN:
+        elif action_choice is Action.PASS_TURN:
             return AIMove(action=Action.PASS_TURN, card=None)
+        else:
+            raise ValueError("Unknown move by AI")

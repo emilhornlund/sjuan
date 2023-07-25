@@ -57,7 +57,9 @@ class GameScreen(Screen):
         :return: NoReturn
         """
 
-        if action[0] == Action.PLAY_CARD:
+        if action[0] == Action.PLAY_ALL_CARDS:
+            self.game.play_all_cards()
+        elif action[0] == Action.PLAY_CARD:
             self.game.play_card(action[1])
         elif action[0] == Action.GIVE_CARD:
             self.game.give_card(action[1])
@@ -75,10 +77,12 @@ class GameScreen(Screen):
 
         actions: List[Tuple[Action, Card]] = []
         for action in self.game.turn.actions:
-            if action is Action.PLAY_CARD:
+            if action is Action.PLAY_ALL_CARDS:
+                actions.append((action, None))
+            elif action is Action.PLAY_CARD:
                 for card in self.game.turn.valid_cards:
                     actions.append((action, card))
-            if action is Action.GIVE_CARD:
+            elif action is Action.GIVE_CARD:
                 for card in self.game.turn.player.hand:
                     actions.append((action, card))
             elif action is Action.TAKE_CARD or action is Action.PASS_TURN:
@@ -193,7 +197,7 @@ class GameScreen(Screen):
             tmp = f"{card.rank.name} of {card.suit.name}"
             max_line_width = max(max_line_width, len(tmp))
             output += f"| {tmp.ljust(25)} |\n"
-        return (output.splitlines(), 29)
+        return (output.splitlines(), 27)
 
     def __get_action_lines(self, actions: List[Tuple[Action, Card]]) -> Tuple[list[str], int]:
         """
@@ -206,14 +210,18 @@ class GameScreen(Screen):
         output = ""
         for i, action in enumerate(actions):
             tmp = ""
-            if action[0] == Action.PLAY_CARD:
+            if action[0] == Action.PLAY_ALL_CARDS:
+                tmp = f"Play all cards"
+            elif action[0] == Action.PLAY_CARD:
                 tmp = f"Play {action[1].rank.name} of {action[1].suit.name}"
-            if action[0] == Action.GIVE_CARD:
+            elif action[0] == Action.GIVE_CARD:
                 tmp = f"Give {action[1].rank.name} of {action[1].suit.name}"
-            if action[0] == Action.TAKE_CARD:
+            elif action[0] == Action.TAKE_CARD:
                 tmp = f"Take card"
-            if action[0] == Action.PASS_TURN:
+            elif action[0] == Action.PASS_TURN:
                 tmp = f"Pass turn"
+            else:
+                raise ValueError("Unknown action")
             tmp = f"({i + 1}) {tmp}"
             output += f"| {tmp.ljust(36)} |\n"
         return (output.splitlines(), 40)

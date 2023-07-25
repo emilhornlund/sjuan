@@ -90,6 +90,7 @@ class Action(Enum):
     Each action is an auto-assigned Enum member.
     """
 
+    PLAY_ALL_CARDS = auto()
     PLAY_CARD = auto()
     TAKE_CARD = auto()
     GIVE_CARD = auto()
