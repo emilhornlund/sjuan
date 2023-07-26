@@ -9,10 +9,10 @@ class Suit(Enum):
     Enum class to represent the suit of a card. Each card suit is an auto-assigned Enum member.
     """
 
-    HEARTS = auto()
-    DIAMONDS = auto()
-    CLUBS = auto()
-    SPADES = auto()
+    HEARTS = 1
+    DIAMONDS = 2
+    CLUBS = 3
+    SPADES = 4
 
 
 class Rank(Enum):

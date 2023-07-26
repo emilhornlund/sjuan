@@ -1,6 +1,6 @@
 # lib/turn.py
 
-from typing import Set
+from typing import List, Set
 
 from .action import Action
 from .player import Player
@@ -12,7 +12,7 @@ class Turn:
     the current player.
     """
 
-    def __init__(self, actions: Set[Action], player: Player) -> None:
+    def __init__(self, actions: Set[Action], player: Player, opponents: List[Player]) -> None:
         """
         Constructor for the Turn class.
 
@@ -23,6 +23,7 @@ class Turn:
 
         self.__actions: Set[Action] = actions
         self.__player: Player = player
+        self.__opponents: List[Player] = opponents
 
     @property
     def actions(self) -> Set[Action]:
@@ -43,6 +44,16 @@ class Turn:
         """
 
         return self.__player
+
+    @property
+    def opponents(self) -> List[Player]:
+        """
+        Get the opponents to the current player.
+
+        :return: List of opponents
+        """
+
+        return self.__opponents
 
     def has_action(self, action: Action) -> bool:
         """

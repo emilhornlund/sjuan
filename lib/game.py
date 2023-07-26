@@ -61,6 +61,16 @@ class Game:
         self.__start_turn()
 
     @property
+    def players(self) -> List[Player]:
+        """
+        Get all the players.
+
+        :return: List of the players
+        """
+
+        return self.__players
+
+    @property
     def turn(self) -> Turn:
         """
         Current turn of the game.
@@ -195,7 +205,7 @@ class Game:
         actions.add(Action(type=ActionType.PLAY_CARD, card=seven_of_hearts))
 
         self.__current_turn = Turn(
-            actions=actions, player=self.__current_player)
+            actions=actions, player=self.__current_player, opponents=self.__get_player_opponents(self.__current_player))
 
         if self.__current_turn.player.type is PlayerType.AI:
             self.__advance_turn_decision()
@@ -245,10 +255,12 @@ class Game:
             for card in self.__current_player_valid_cards:
                 actions.add(Action(type=ActionType.PLAY_CARD, card=card))
 
-        actions.add(Action(type=ActionType.PASS_TURN))
+            actions.add(Action(type=ActionType.PASS_TURN))
 
-        self.__current_turn = Turn(
-            actions=actions, player=self.__current_player)
+            self.__current_turn = Turn(
+                actions=actions, player=self.__current_player, opponents=self.__get_player_opponents(self.__current_player))
+        else:
+            self.__advance_turn_other()
 
     def __advance_turn_take_card(self) -> None:
         """
@@ -262,7 +274,7 @@ class Game:
             actions.add(Action(type=ActionType.GIVE_CARD, card=card))
 
         self.__current_turn = Turn(
-            actions=actions, player=self.__previous_player)
+            actions=actions, player=self.__previous_player, opponents=self.__get_player_opponents(self.__previous_player))
 
     def __advance_turn_other(self) -> None:
         """
@@ -284,7 +296,7 @@ class Game:
             actions.add(Action(type=ActionType.TAKE_CARD))
 
         self.__current_turn = Turn(
-            actions=actions, player=self.__current_player)
+            actions=actions, player=self.__current_player, opponents=self.__get_player_opponents(self.__current_player))
 
     def __advance_turn_decision(self) -> None:
         """
@@ -343,6 +355,9 @@ class Game:
                 return self.__players[tmp_previous_player_index]
 
         raise ValueError("No players with cards were found.")
+
+    def __get_player_opponents(self, player: Player) -> List[Player]:
+        return [p for p in self.__players if p != player]
 
     def __advance_player(self) -> None:
         """

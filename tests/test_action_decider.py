@@ -16,7 +16,8 @@ class TestActionDecider(unittest.TestCase):
         actions = {Action(ActionType.PLAY_ALL_CARDS)}
 
         # Create a turn with the actions
-        turn = Turn(actions, Player(name="Alice", type=PlayerType.AI))
+        turn = Turn(actions=actions, player=Player(
+            name="Alice", type=PlayerType.AI), opponents=[])
 
         # The expected action is to play all cards, because it's the only action available
         expected_action = Action(ActionType.PLAY_ALL_CARDS)
@@ -41,7 +42,8 @@ class TestActionDecider(unittest.TestCase):
             ActionType.GIVE_CARD, Card(Suit.HEARTS, Rank.FIVE))}
 
         # Create a turn with the actions
-        turn = Turn(actions, Player(name="Alice", type=PlayerType.AI))
+        turn = Turn(actions=actions, player=Player(
+            name="Alice", type=PlayerType.AI), opponents=[])
 
         # The expected action is to give a card, because it's the only action available
         expected_action = Action(ActionType.GIVE_CARD,
@@ -68,7 +70,8 @@ class TestActionDecider(unittest.TestCase):
             ActionType.PLAY_CARD, Card(Suit.HEARTS, Rank.SIX))}
 
         # Create a turn with the actions
-        turn = Turn(actions, Player(name="Alice", type=PlayerType.AI))
+        turn = Turn(actions=actions, player=Player(
+            name="Alice", type=PlayerType.AI), opponents=[])
 
         # The expected action is to play a card, because it's the only action available
         expected_action = Action(ActionType.PLAY_CARD,
@@ -86,7 +89,8 @@ class TestActionDecider(unittest.TestCase):
         actions = {Action(ActionType.TAKE_CARD)}
 
         # Create a turn with the actions
-        turn = Turn(actions, Player(name="Alice", type=PlayerType.AI))
+        turn = Turn(actions=actions, player=Player(
+            name="Alice", type=PlayerType.AI), opponents=[])
 
         # The expected action is to take a card, because it's the only action available
         expected_action = Action(ActionType.TAKE_CARD)
@@ -103,7 +107,8 @@ class TestActionDecider(unittest.TestCase):
         actions = {Action(ActionType.PASS_TURN)}
 
         # Create a turn with the actions
-        turn = Turn(actions, Player(name="Alice", type=PlayerType.AI))
+        turn = Turn(actions=actions, player=Player(
+            name="Alice", type=PlayerType.AI), opponents=[])
 
         # The expected action is to pass the turn, because it's the only action available
         expected_action = Action(ActionType.PASS_TURN)
@@ -136,7 +141,8 @@ class TestActionDecider(unittest.TestCase):
             else Action(action_type, Card(Suit.HEARTS, Rank.ACE))
             for action_type in ActionType
         }
-        turn = Turn(actions, Player(name="Alice", type=PlayerType.AI))
+        turn = Turn(actions=actions, player=Player(
+            name="Alice", type=PlayerType.AI), opponents=[])
 
         # Test each priority
         for priority in range(1, 6):
@@ -157,7 +163,8 @@ class TestActionDecider(unittest.TestCase):
         board_matrix = [[False]*13 for _ in range(4)]
 
         # Create a turn with no actions
-        turn = Turn(set(), Player(name="Alice", type=PlayerType.AI))
+        turn = Turn(actions=set(), player=Player(
+            name="Alice", type=PlayerType.AI), opponents=[])
 
         # Call decide_action and check that it raises a ValueError
         with self.assertRaises(ValueError):

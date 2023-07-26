@@ -16,6 +16,7 @@ class PlayerType(Enum):
 
     HUMAN = auto()
     AI = auto()
+    AGENT = auto()
 
     def __str__(self) -> str:
         """

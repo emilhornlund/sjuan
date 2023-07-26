@@ -54,6 +54,7 @@ class TestGame(unittest.TestCase):
         self.assertEqual(len(self.game.turn.actions), 1)
         self.assertEqual(self.game.turn.actions, set(
             [Action(type=ActionType.PLAY_CARD, card=Card(Suit.HEARTS, Rank.SEVEN))]))
+        self.assertEqual(len(self.game.turn.opponents), 3)
 
     def assert_game_reset(self) -> None:
         """Check that a game is correctly reset."""
