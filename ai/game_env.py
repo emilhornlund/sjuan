@@ -1,7 +1,7 @@
 import gym
 import numpy as np
 from gym import spaces
-from typing import List, Set, Tuple
+from typing import List, Tuple
 
 from lib.action import Action, ActionType
 from lib.card import Card, Rank, Suit
@@ -63,17 +63,30 @@ class GameEnv(gym.Env):
         """
 
         # Map to corresponding action
-        action_choice: Action = self.all_possible_actions[action]
+        initial_action_choice: Action = self.all_possible_actions[action]
+        action_choice: Action = initial_action_choice
 
         # If the action isn't valid for this state, select a new action at random until a valid one is found
-        while action_choice not in self.game.turn.actions:
-            action = self.action_space.sample()  # Sample a new action
-            action_choice = self.all_possible_actions[action]
+        if action_choice not in self.game.turn.actions:
+            # Give a small negative reward for attempting an invalid action
+            invalid_action_penalty = -0.01
+
+            while action_choice not in self.game.turn.actions:
+                action = self.action_space.sample()  # Sample a new action
+                action_choice = self.all_possible_actions[action]
+        else:
+            # The initial action was valid, so there is no penalty
+            invalid_action_penalty = 0
+
+        # Calculate the reward for the final action (valid initial or sampled)
+        reward = self.get_reward(action_choice) + invalid_action_penalty
 
         self.game.execute_action(action_choice)
 
         done = self.game.is_finished()
-        reward = self.get_reward(action_choice)
+        if done:
+            # Reward or penalty at the end of the game
+            reward = self.get_reward(action_choice)
 
         return self.get_state(), reward, done, {}
 
@@ -112,10 +125,8 @@ class GameEnv(gym.Env):
                 return 1.0
             else:
                 return -1.0
-        elif action_choice.type in {ActionType.PLAY_ALL_CARDS, ActionType.GIVE_CARD, ActionType.PLAY_CARD, ActionType.PASS_TURN}:
-            return 0.01
         else:
-            return -0.01
+            return 0  # default case (should ideally never be reached)
 
     def get_state(self) -> np.array:
         """
